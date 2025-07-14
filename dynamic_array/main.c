@@ -11,8 +11,8 @@ int main(void) {
         append(&my_array, i * 2);
     }
 
-    printf("%zu\n", my_array.capacity);
-    printf("%zu\n", my_array.size);
+    printf("Capacity: %zu\n", my_array.capacity);
+    printf("Size: %zu\n", my_array.size);
 
     for (int i = 0; i < my_array.size; ++i) {
         printf("%d\n", my_array.data[i]);
@@ -22,6 +22,12 @@ int main(void) {
     remove_at(&my_array, 14);
 
     remove_value(&my_array, 42);
+
+    insert_at(&my_array, 100, 8);
+    insert_at(&my_array, 9767, my_array.size);
+
+    printf("Capacity: %zu\n", my_array.capacity);
+    printf("Size: %zu\n", my_array.size);
 
     for (int i = 0; i < my_array.size; ++i) {
         printf("%d\n", my_array.data[i]);

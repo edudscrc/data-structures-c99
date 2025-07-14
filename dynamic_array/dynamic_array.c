@@ -1,4 +1,5 @@
 #include "dynamic_array.h"
+#include <stdlib.h>
 
 void init_dynamic_array(DynamicArray* array, size_t initial_capacity) {
     array->capacity = initial_capacity;
@@ -36,6 +37,46 @@ void append(DynamicArray* array, int value) {
     array->data[array->size++] = value;
 }
 
+void insert_at(DynamicArray* array, int value, int index) {
+    if (array == NULL) {
+        printf("ERROR: parameter `array` is NULL in function <insert_at>.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    if (array->data == NULL) {
+        printf("ERROR: parameter `array->data` is NULL in function <insert_at>.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    if (index > array->size) {
+        printf("ERROR: parameter `index` >= array->size in function <insert_at>.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    if (array->size == array->capacity) {
+        int* resized_data = reallocarray(array->data, array->capacity * 2, sizeof(int));
+        if (resized_data == NULL) {
+            printf("ERROR: `reallocarray` returned NULL in function <insert_at>.\n");
+            free(array->data);
+            exit(EXIT_FAILURE);
+        }
+        array->data = resized_data;
+        array->capacity *= 2;
+    }
+
+    if (index == array->size) {
+        array->data[array->size++] = value;
+        return;
+    }
+
+    for (int i = array->size; i > index; --i) {
+        array->data[i] = array->data[i-1];
+    }
+
+    array->data[index] = value;
+    array->size++;
+}
+
 void remove_value(DynamicArray* array, int value) {
     if (array == NULL) {
         printf("ERROR: parameter `array` is NULL in function <remove_value>.\n");
@@ -65,6 +106,11 @@ void remove_at(DynamicArray* array, int index) {
         exit(EXIT_FAILURE);
     }
 
+    if (array->data == NULL) {
+        printf("ERROR: parameter `array->data` is NULL in function <remove_at>.\n");
+        exit(EXIT_FAILURE);
+    }
+
     if (index >= array->size) {
         printf("ERROR: parameter `index` >= array->size in function <remove_at>.\n");
         exit(EXIT_FAILURE);
@@ -74,7 +120,7 @@ void remove_at(DynamicArray* array, int index) {
         array->data[i] = array->data[i+1];
     }
 
-    array->size -= 1;
+    array->size--;
 }
 
 void destroy_dynamic_array(DynamicArray* array) {
