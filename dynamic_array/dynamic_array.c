@@ -1,5 +1,4 @@
 #include "dynamic_array.h"
-#include <stdlib.h>
 
 void init_dynamic_array(DynamicArray* array, size_t initial_capacity) {
     array->capacity = initial_capacity;
@@ -123,6 +122,25 @@ void remove_at(DynamicArray* array, int index) {
     array->size--;
 }
 
+void remove_last(DynamicArray* array) {
+    if (array == NULL) {
+        printf("ERROR: parameter `array` is NULL in function <remove_last>.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    if (array->data == NULL) {
+        printf("ERROR: parameter `array->data` is NULL in function <remove_last>.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    if (array->size == 0) {
+        printf("ERROR: parameter `array` is empty in function <remove_last>.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    array->size--;
+}
+
 void destroy_dynamic_array(DynamicArray* array) {
     if (array == NULL) {
         printf("ERROR: parameter `array` is NULL in function <destroy_dynamic_array>.\n");
@@ -137,4 +155,31 @@ void destroy_dynamic_array(DynamicArray* array) {
     free(array->data);
     array->data = NULL;
     array->size = 0;
+    array->capacity = 0;
+}
+
+void print_info(DynamicArray* array) {
+    if (array == NULL) {
+        printf("ERROR: parameter `array` is NULL in function <print_info>.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    printf("Capacity: %zu\n", array->capacity);
+    printf("Size: %zu\n", array->size);
+}
+
+void traverse(DynamicArray* array) {
+    if (array == NULL) {
+        printf("ERROR: parameter `array` is NULL in function <traverse>.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    if (array->data == NULL) {
+        printf("ERROR: parameter `array->data` is NULL in function <traverse>.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    for (int i = 0; i < array->size; ++i) {
+        printf("%d\n", array->data[i]);
+    }
 }

@@ -11,12 +11,9 @@ int main(void) {
         append(&my_array, i * 2);
     }
 
-    printf("Capacity: %zu\n", my_array.capacity);
-    printf("Size: %zu\n", my_array.size);
+    print_info(&my_array);
 
-    for (int i = 0; i < my_array.size; ++i) {
-        printf("%d\n", my_array.data[i]);
-    }
+    traverse(&my_array);
 
     remove_at(&my_array, 4);
     remove_at(&my_array, 14);
@@ -26,12 +23,15 @@ int main(void) {
     insert_at(&my_array, 100, 8);
     insert_at(&my_array, 9767, my_array.size);
 
-    printf("Capacity: %zu\n", my_array.capacity);
-    printf("Size: %zu\n", my_array.size);
+    traverse(&my_array);
 
-    for (int i = 0; i < my_array.size; ++i) {
-        printf("%d\n", my_array.data[i]);
-    }
+    remove_last(&my_array);
+    remove_last(&my_array);
+    remove_last(&my_array);
+
+    print_info(&my_array);
+
+    traverse(&my_array);
 
     destroy_dynamic_array(&my_array);
 
