@@ -1,20 +1,20 @@
-#include "eds_dynamic_array.h"
+#include "../include/EdS/dynamic_array.h"
 
-EdS_dynamic_array_t *EdS_dynamic_array_new(size_t initial_capacity) {
+EdS_darray_t *EdS_darray_new(size_t initial_capacity) {
     if (initial_capacity == 0) {
-        fprintf(stderr, "ERROR: NULL pointer passed in function <EdS_dynamic_array_new>.\n");
+        fprintf(stderr, "ERROR: NULL pointer passed in function <EdS_darray_new>.\n");
         return NULL;
     }
 
-    EdS_dynamic_array_t *arr = malloc(sizeof(EdS_dynamic_array_t));
+    EdS_darray_t *arr = malloc(sizeof(EdS_darray_t));
     if (arr == NULL) {
-        fprintf(stderr, "ERROR: `malloc` returned NULL in function <EdS_dynamic_array_new>.\n");
+        fprintf(stderr, "ERROR: `malloc` returned NULL in function <EdS_darray_new>.\n");
         return NULL;
     }
 
     arr->data = malloc(sizeof(int) * initial_capacity);
     if (arr->data == NULL) {
-        fprintf(stderr, "ERROR: `malloc` returned NULL in function <EdS_dynamic_array_new>.\n");
+        fprintf(stderr, "ERROR: `malloc` returned NULL in function <EdS_darray_new>.\n");
         return NULL;
     }
 
@@ -24,7 +24,7 @@ EdS_dynamic_array_t *EdS_dynamic_array_new(size_t initial_capacity) {
     return arr;
 }
 
-int EdS_dynamic_array_append(EdS_dynamic_array_t *arr, int value) {
+int EdS_darray_append(EdS_darray_t *arr, int value) {
     if (arr == NULL || arr->data == NULL) {
         fprintf(stderr, "ERROR: NULL pointer passed in function <append>.\n");
         return EDS_RETURN_ERROR;
@@ -44,7 +44,7 @@ int EdS_dynamic_array_append(EdS_dynamic_array_t *arr, int value) {
     return EDS_RETURN_SUCCESS;
 }
 
-int EdS_dynamic_array_insert(EdS_dynamic_array_t *arr, size_t index, int value) {
+int EdS_darray_insert(EdS_darray_t *arr, size_t index, int value) {
     if (arr == NULL || arr->data == NULL) {
         fprintf(stderr, "ERROR: NULL pointer passed in function <insert>.\n");
         return EDS_RETURN_ERROR;
@@ -75,7 +75,7 @@ int EdS_dynamic_array_insert(EdS_dynamic_array_t *arr, size_t index, int value) 
     return EDS_RETURN_SUCCESS;
 }
 
-int EdS_dynamic_array_pop(EdS_dynamic_array_t *arr, int *removed_value) {
+int EdS_darray_pop(EdS_darray_t *arr, int *removed_value) {
     if (arr == NULL || arr->data == NULL) {
         fprintf(stderr, "ERROR: NULL pointer passed in function <pop>.\n");
         return EDS_RETURN_ERROR;
@@ -95,7 +95,7 @@ int EdS_dynamic_array_pop(EdS_dynamic_array_t *arr, int *removed_value) {
     return EDS_RETURN_SUCCESS;
 }
 
-int EdS_dynamic_array_remove(EdS_dynamic_array_t *arr, int value, int *removed_value) {
+int EdS_darray_remove(EdS_darray_t *arr, int value, int *removed_value) {
     if (arr == NULL || arr->data == NULL) {
         fprintf(stderr, "ERROR: NULL pointer passed in function <remove_value>.\n");
         return EDS_RETURN_ERROR;
@@ -103,7 +103,7 @@ int EdS_dynamic_array_remove(EdS_dynamic_array_t *arr, int value, int *removed_v
 
     for (size_t i = 0; i < arr->size; ++i) {
         if (arr->data[i] == value) {
-            return EdS_dynamic_array_remove_at(arr, i, removed_value);
+            return EdS_darray_remove_at(arr, i, removed_value);
         }
     }
 
@@ -111,7 +111,7 @@ int EdS_dynamic_array_remove(EdS_dynamic_array_t *arr, int value, int *removed_v
     return EDS_RETURN_ERROR;
 }
 
-int EdS_dynamic_array_remove_at(EdS_dynamic_array_t *arr, size_t index, int *removed_value) {
+int EdS_darray_remove_at(EdS_darray_t *arr, size_t index, int *removed_value) {
     if (arr == NULL || arr->data == NULL) {
         fprintf(stderr, "ERROR: NULL pointer passed in function <remove_at>.\n");
         return EDS_RETURN_ERROR;
@@ -135,9 +135,9 @@ int EdS_dynamic_array_remove_at(EdS_dynamic_array_t *arr, size_t index, int *rem
     return EDS_RETURN_SUCCESS;
 }
 
-int EdS_dynamic_array_free(EdS_dynamic_array_t *arr) {
+int EdS_darray_free(EdS_darray_t *arr) {
     if (arr == NULL) {
-        fprintf(stderr, "ERROR: NULL pointer passed in function <destroy_dynamic_array>.\n");
+        fprintf(stderr, "ERROR: NULL pointer passed in function <destroy_darray>.\n");
         return EDS_RETURN_ERROR;
     }
 
@@ -152,7 +152,7 @@ int EdS_dynamic_array_free(EdS_dynamic_array_t *arr) {
     return EDS_RETURN_SUCCESS;
 }
 
-int EdS_dynamic_array_clear(EdS_dynamic_array_t *arr) {
+int EdS_darray_clear(EdS_darray_t *arr) {
     if (arr == NULL) {
         fprintf(stderr, "ERROR: NULL pointer passed in function <clear>.\n");
         return EDS_RETURN_ERROR;
@@ -162,7 +162,7 @@ int EdS_dynamic_array_clear(EdS_dynamic_array_t *arr) {
     return EDS_RETURN_SUCCESS;
 }
 
-int EdS_dynamic_array_get(const EdS_dynamic_array_t *arr, size_t index, int *value) {
+int EdS_darray_get(const EdS_darray_t *arr, size_t index, int *value) {
     if (arr == NULL || arr->data == NULL || value == NULL) {
         fprintf(stderr, "ERROR: NULL pointer passed in function <get>.\n");
         return EDS_RETURN_ERROR;
@@ -177,7 +177,7 @@ int EdS_dynamic_array_get(const EdS_dynamic_array_t *arr, size_t index, int *val
     return EDS_RETURN_SUCCESS;
 }
 
-int EdS_dynamic_array_set(EdS_dynamic_array_t *arr, size_t index, int value, int *old_value) {
+int EdS_darray_set(EdS_darray_t *arr, size_t index, int value, int *old_value) {
     if (arr == NULL || arr->data == NULL) {
         fprintf(stderr, "ERROR: NULL pointer passed in function <set>.\n");
         return EDS_RETURN_ERROR;
@@ -196,7 +196,7 @@ int EdS_dynamic_array_set(EdS_dynamic_array_t *arr, size_t index, int value, int
     return EDS_RETURN_SUCCESS;
 }
 
-void EdS_dynamic_array_print_info(EdS_dynamic_array_t *arr) {
+void EdS_darray_print_info(EdS_darray_t *arr) {
     if (arr == NULL) {
         printf("ERROR: parameter `arr` is NULL in function <print_info>.\n");
         exit(EXIT_FAILURE);
@@ -206,7 +206,7 @@ void EdS_dynamic_array_print_info(EdS_dynamic_array_t *arr) {
     printf("Size: %zu\n", arr->size);
 }
 
-void EdS_dynamic_array_traverse(EdS_dynamic_array_t *arr) {
+void EdS_darray_traverse(EdS_darray_t *arr) {
     if (arr == NULL) {
         printf("ERROR: parameter `arr` is NULL in function <traverse>.\n");
         exit(EXIT_FAILURE);

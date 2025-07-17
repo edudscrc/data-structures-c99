@@ -53,3 +53,10 @@ dkms.conf
 
 # debug information files
 *.dwo
+
+lib/
+bin/
+obj/
+
+# Temporary (while I still don't know very much on how to create a Makefile)
+Makefile
