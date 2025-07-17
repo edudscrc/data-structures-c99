@@ -30,7 +30,7 @@ int EdS_darray_clear(EdS_darray_t *arr);
 int EdS_darray_get(const EdS_darray_t *arr, size_t index, int *value);
 int EdS_darray_set(EdS_darray_t *arr, size_t index, int value, int *old_value);
 
-void EdS_darray_print_info(EdS_darray_t *arr);
-void EdS_darray_traverse(EdS_darray_t *arr);
+int EdS_darray_print_info(EdS_darray_t *arr);
+int EdS_darray_traverse(EdS_darray_t *arr);
 
 #endif // EDS_DYNAMIC_ARRAY_H

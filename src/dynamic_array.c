@@ -2,7 +2,7 @@
 
 EdS_darray_t *EdS_darray_new(size_t initial_capacity) {
     if (initial_capacity == 0) {
-        fprintf(stderr, "ERROR: NULL pointer passed in function <EdS_darray_new>.\n");
+        fprintf(stderr, "ERROR: <initial_capacity> can't be 0 in function <EdS_darray_new>.\n");
         return NULL;
     }
 
@@ -14,6 +14,7 @@ EdS_darray_t *EdS_darray_new(size_t initial_capacity) {
 
     arr->data = malloc(sizeof(int) * initial_capacity);
     if (arr->data == NULL) {
+        free(arr);
         fprintf(stderr, "ERROR: `malloc` returned NULL in function <EdS_darray_new>.\n");
         return NULL;
     }
@@ -147,7 +148,6 @@ int EdS_darray_free(EdS_darray_t *arr) {
     arr->capacity = 0;
 
     free(arr);
-    arr = NULL;
 
     return EDS_RETURN_SUCCESS;
 }
@@ -196,28 +196,26 @@ int EdS_darray_set(EdS_darray_t *arr, size_t index, int value, int *old_value) {
     return EDS_RETURN_SUCCESS;
 }
 
-void EdS_darray_print_info(EdS_darray_t *arr) {
+int EdS_darray_print_info(EdS_darray_t *arr) {
     if (arr == NULL) {
-        printf("ERROR: parameter `arr` is NULL in function <print_info>.\n");
-        exit(EXIT_FAILURE);
+        fprintf(stderr, "ERROR: NULL pointer passed in function <print_info>.\n");
+        return EDS_RETURN_ERROR;
     }
 
     printf("Capacity: %zu\n", arr->capacity);
     printf("Size: %zu\n", arr->size);
+    return EDS_RETURN_SUCCESS;
 }
 
-void EdS_darray_traverse(EdS_darray_t *arr) {
-    if (arr == NULL) {
-        printf("ERROR: parameter `arr` is NULL in function <traverse>.\n");
-        exit(EXIT_FAILURE);
-    }
-
-    if (arr->data == NULL) {
-        printf("ERROR: parameter `arr->data` is NULL in function <traverse>.\n");
-        exit(EXIT_FAILURE);
+int EdS_darray_traverse(EdS_darray_t *arr) {
+    if (arr == NULL || arr->data == NULL) {
+        fprintf(stderr, "ERROR: NULL pointer passed in function <traverse>.\n");
+        return EDS_RETURN_ERROR;
     }
 
     for (size_t i = 0; i < arr->size; ++i) {
         printf("%d\n", arr->data[i]);
     }
+
+    return EDS_RETURN_SUCCESS;
 }
