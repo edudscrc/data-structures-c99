@@ -1,36 +1,37 @@
 #ifndef EDS_DYNAMIC_ARRAY_H
 #define EDS_DYNAMIC_ARRAY_H
 
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
+#include <stddef.h>
 
-#define EDS_RETURN_SUCCESS 0
-#define EDS_RETURN_ERROR -1
+enum EdsResult { 
+    EDS_SUCCESS = 0, 
+    EDS_FAIL = 1, 
+};
 
-typedef struct EdS_darray_t {
-    int *data;
-    size_t size;
-    size_t capacity;
-} EdS_darray_t;
+struct EdsError {
+    int code;
+    const char *message;
+};
 
-EdS_darray_t *EdS_darray_new(size_t initial_capacity);
+struct EdsArray;
 
-int EdS_darray_append(EdS_darray_t *arr, int value);
-int EdS_darray_insert(EdS_darray_t *arr, size_t index, int value);
+struct EdsArray *EdsArray_new(size_t initial_capacity);
 
-int EdS_darray_pop(EdS_darray_t *arr, int *removed_value);
-int EdS_darray_remove(EdS_darray_t *arr, int value, int *removed_value);
-int EdS_darray_remove_at(EdS_darray_t *arr, size_t index, int *removed_value);
+enum EdsResult EdsArray_append(struct EdsArray *arr, int value);
+enum EdsResult EdsArray_insert(struct EdsArray *arr, size_t index, int value);
 
-int EdS_darray_free(EdS_darray_t *arr);
+enum EdsResult EdsArray_pop(struct EdsArray *arr, int *removed_value);
+enum EdsResult EdsArray_remove(struct EdsArray *arr, int value, int *removed_value);
+enum EdsResult EdsArray_remove_at(struct EdsArray *arr, size_t index, int *removed_value);
 
-int EdS_darray_clear(EdS_darray_t *arr);
+enum EdsResult EdsArray_free(struct EdsArray *arr);
 
-int EdS_darray_get(const EdS_darray_t *arr, size_t index, int *value);
-int EdS_darray_set(EdS_darray_t *arr, size_t index, int value, int *old_value);
+enum EdsResult EdsArray_clear(struct EdsArray *arr);
 
-int EdS_darray_print_info(EdS_darray_t *arr);
-int EdS_darray_traverse(EdS_darray_t *arr);
+enum EdsResult EdsArray_get(const struct EdsArray *arr, size_t index, int *value);
+enum EdsResult EdsArray_set(struct EdsArray *arr, size_t index, int value, int *old_value);
+
+enum EdsResult EdsArray_size(const struct EdsArray *arr, size_t *result);
+enum EdsResult EdsArray_capacity(const struct EdsArray *arr, size_t *result);
 
 #endif // EDS_DYNAMIC_ARRAY_H
