@@ -1,52 +1,51 @@
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include "../include/EdS/dynamic_array.h"
 
 struct EdsArray {
     int *data;
-    size_t size;
     size_t capacity;
+    size_t size;
 };
 
-struct EdsArray *EdsArray_new(size_t initial_capacity) {
+static enum EdsResult EdsArray_resize(struct EdsArray *arr);
+
+enum EdsResult EdsArray_new(struct EdsArray **arr, size_t initial_capacity) {
     if (initial_capacity == 0) {
-        fprintf(stderr, "ERROR: <initial_capacity> can't be 0 in function <EdsArray_new>.\n");
-        return NULL;
+        return EDS_ERROR_INVALID_PARAMETER;
     }
 
-    struct EdsArray *arr = malloc(sizeof(struct EdsArray));
-    if (arr == NULL) {
-        fprintf(stderr, "ERROR: `malloc` returned NULL in function <EdsArray_new>.\n");
-        return NULL;
+    struct EdsArray *new_arr = malloc(sizeof(struct EdsArray));
+    if (new_arr == NULL) {
+        return EDS_ERROR_MALLOC_FAILED;
     }
 
-    arr->data = malloc(sizeof(int) * initial_capacity);
-    if (arr->data == NULL) {
-        free(arr);
-        fprintf(stderr, "ERROR: `malloc` returned NULL in function <EdsArray_new>.\n");
-        return NULL;
+    new_arr->data = malloc(sizeof(int) * initial_capacity);
+    if (new_arr->data == NULL) {
+        free(new_arr);
+        return EDS_ERROR_MALLOC_FAILED;
     }
 
-    arr->capacity = initial_capacity;
-    arr->size = 0;
+    *arr = new_arr;
 
-    return arr;
+    (*arr)->capacity = initial_capacity;
+    (*arr)->size = 0;
+
+    return EDS_SUCCESS;
 }
 
 enum EdsResult EdsArray_append(struct EdsArray *arr, int value) {
     if (arr == NULL || arr->data == NULL) {
-        fprintf(stderr, "ERROR: NULL pointer passed in function <append>.\n");
-        return EDS_FAIL;
+        return EDS_ERROR_NULL_POINTER_PASSED;
     }
 
     if (arr->size == arr->capacity) {
-        int *resized_data = reallocarray(arr->data, arr->capacity * 2, sizeof(int));
-        if (resized_data == NULL) {
-            fprintf(stderr, "ERROR: `reallocarray` returned NULL in function <append>.\n");
-            return EDS_FAIL;
+        enum EdsResult r;
+        if ((r = EdsArray_resize(arr)) != 0) {
+            return r;
         }
-        arr->data = resized_data;
-        arr->capacity *= 2;
     }
 
     arr->data[arr->size++] = value;
@@ -55,23 +54,18 @@ enum EdsResult EdsArray_append(struct EdsArray *arr, int value) {
 
 enum EdsResult EdsArray_insert(struct EdsArray *arr, size_t index, int value) {
     if (arr == NULL || arr->data == NULL) {
-        fprintf(stderr, "ERROR: NULL pointer passed in function <insert>.\n");
-        return EDS_FAIL;
+        return EDS_ERROR_NULL_POINTER_PASSED;
     }
 
     if (index > arr->size) {
-        fprintf(stderr, "ERROR: invalid <index> in function <insert>.\n");
-        return EDS_FAIL;
+        return EDS_ERROR_INDEX_OUT_OF_BOUNDS;
     }
 
     if (arr->size == arr->capacity) {
-        int *resized_data = reallocarray(arr->data, arr->capacity * 2, sizeof(int));
-        if (resized_data == NULL) {
-            fprintf(stderr, "ERROR: `reallocarray` returned NULL in function <insert>.\n");
-            return EDS_FAIL;
+        enum EdsResult r;
+        if ((r = EdsArray_resize(arr)) != 0) {
+            return r;
         }
-        arr->data = resized_data;
-        arr->capacity *= 2;
     }
 
     for (size_t i = arr->size; i > index; --i) {
@@ -86,13 +80,11 @@ enum EdsResult EdsArray_insert(struct EdsArray *arr, size_t index, int value) {
 
 enum EdsResult EdsArray_pop(struct EdsArray *arr, int *removed_value) {
     if (arr == NULL || arr->data == NULL) {
-        fprintf(stderr, "ERROR: NULL pointer passed in function <pop>.\n");
-        return EDS_FAIL;
+        return EDS_ERROR_NULL_POINTER_PASSED;
     }
 
     if (arr->size == 0) {
-        fprintf(stderr, "ERROR: parameter `arr` is empty in function <pop>.\n");
-        return EDS_FAIL;
+        return EDS_ELEMENT_NOT_FOUND;
     }
 
     arr->size--;
@@ -106,8 +98,7 @@ enum EdsResult EdsArray_pop(struct EdsArray *arr, int *removed_value) {
 
 enum EdsResult EdsArray_remove(struct EdsArray *arr, int value, int *removed_value) {
     if (arr == NULL || arr->data == NULL) {
-        fprintf(stderr, "ERROR: NULL pointer passed in function <remove_value>.\n");
-        return EDS_FAIL;
+        return EDS_ERROR_NULL_POINTER_PASSED;
     }
 
     for (size_t i = 0; i < arr->size; ++i) {
@@ -116,19 +107,16 @@ enum EdsResult EdsArray_remove(struct EdsArray *arr, int value, int *removed_val
         }
     }
 
-    fprintf(stderr, "ERROR: `value` %d not found in `arr`.\n", value);
-    return EDS_FAIL;
+    return EDS_ELEMENT_NOT_FOUND;
 }
 
 enum EdsResult EdsArray_remove_at(struct EdsArray *arr, size_t index, int *removed_value) {
     if (arr == NULL || arr->data == NULL) {
-        fprintf(stderr, "ERROR: NULL pointer passed in function <remove_at>.\n");
-        return EDS_FAIL;
+        return EDS_ERROR_NULL_POINTER_PASSED;
     }
 
     if (index >= arr->size) {
-        fprintf(stderr, "ERROR: invalid <index> in function <remove_at>.\n");
-        return EDS_FAIL;
+        return EDS_ERROR_INDEX_OUT_OF_BOUNDS;
     }
 
     if (removed_value != NULL) {
@@ -146,8 +134,7 @@ enum EdsResult EdsArray_remove_at(struct EdsArray *arr, size_t index, int *remov
 
 enum EdsResult EdsArray_free(struct EdsArray *arr) {
     if (arr == NULL) {
-        fprintf(stderr, "ERROR: NULL pointer passed in function <destroy_darray>.\n");
-        return EDS_FAIL;
+        return EDS_ERROR_NULL_POINTER_PASSED;
     }
 
     free(arr->data);
@@ -162,8 +149,7 @@ enum EdsResult EdsArray_free(struct EdsArray *arr) {
 
 enum EdsResult EdsArray_clear(struct EdsArray *arr) {
     if (arr == NULL) {
-        fprintf(stderr, "ERROR: NULL pointer passed in function <clear>.\n");
-        return EDS_FAIL;
+        return EDS_ERROR_NULL_POINTER_PASSED;
     }
 
     arr->size = 0;
@@ -172,13 +158,11 @@ enum EdsResult EdsArray_clear(struct EdsArray *arr) {
 
 enum EdsResult EdsArray_get(const struct EdsArray *arr, size_t index, int *value) {
     if (arr == NULL || arr->data == NULL || value == NULL) {
-        fprintf(stderr, "ERROR: NULL pointer passed in function <get>.\n");
-        return EDS_FAIL;
+        return EDS_ERROR_NULL_POINTER_PASSED;
     }
 
     if (index >= arr->size) {
-        fprintf(stderr, "ERROR: invalid <index> in function <get>.\n");
-        return EDS_FAIL;
+        return EDS_ERROR_INDEX_OUT_OF_BOUNDS;
     }
 
     *value = arr->data[index];
@@ -187,13 +171,11 @@ enum EdsResult EdsArray_get(const struct EdsArray *arr, size_t index, int *value
 
 enum EdsResult EdsArray_set(struct EdsArray *arr, size_t index, int value, int *old_value) {
     if (arr == NULL || arr->data == NULL) {
-        fprintf(stderr, "ERROR: NULL pointer passed in function <set>.\n");
-        return EDS_FAIL;
+        return EDS_ERROR_NULL_POINTER_PASSED;
     }
 
     if (index >= arr->size) {
-        fprintf(stderr, "ERROR: invalid <index> in function <set>.\n");
-        return EDS_FAIL;
+        return EDS_ERROR_INDEX_OUT_OF_BOUNDS;
     }
 
     if (old_value != NULL) {
@@ -206,8 +188,7 @@ enum EdsResult EdsArray_set(struct EdsArray *arr, size_t index, int value, int *
 
 enum EdsResult EdsArray_size(const struct EdsArray *arr, size_t *result) {
     if (arr == NULL || result == NULL) {
-        fprintf(stderr, "ERROR: NULL pointer passed in function <size>.\n");
-        return EDS_FAIL;
+        return EDS_ERROR_NULL_POINTER_PASSED;
     }
 
     *result = arr->size;
@@ -217,11 +198,26 @@ enum EdsResult EdsArray_size(const struct EdsArray *arr, size_t *result) {
 
 enum EdsResult EdsArray_capacity(const struct EdsArray *arr, size_t *result) {
     if (arr == NULL || result == NULL) {
-        fprintf(stderr, "ERROR: NULL pointer passed in function <capacity>.\n");
-        return EDS_FAIL;
+        return EDS_ERROR_NULL_POINTER_PASSED;
     }
 
     *result = arr->capacity;
+
+    return EDS_SUCCESS;
+}
+
+static enum EdsResult EdsArray_resize(struct EdsArray *arr) {
+    if ((SIZE_MAX / (arr->capacity * 2)) < sizeof(int)) {
+        return EDS_ERROR_ARITHMETIC_OVERFLOW;
+    }
+
+    int *resized_data = realloc(arr->data, arr->capacity * 2 * sizeof(int));
+    if (resized_data == NULL) {
+        return EDS_ERROR_REALLOC_FAILED;
+    }
+
+    arr->data = resized_data;
+    arr->capacity *= 2;
 
     return EDS_SUCCESS;
 }

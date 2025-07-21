@@ -4,10 +4,13 @@
 #define AMOUNT_TO_INSERT 30
 
 int main(void) {
-    struct EdsArray *my_array = EdsArray_new(INITIAL_CAPACITY);
+    struct EdsArray *my_array = NULL;
+    EdsArray_new(&my_array, INITIAL_CAPACITY);
 
     for (int i = 0; i < AMOUNT_TO_INSERT; ++i) {
-        EdsArray_append(my_array, i * 2);
+        if (EdsArray_append(my_array, i * 2) < 0) {
+            EdsArray_free(my_array);
+        }
     }
 
     EdsArray_remove_at(my_array, 4, NULL);
